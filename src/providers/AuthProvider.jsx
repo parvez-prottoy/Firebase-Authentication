@@ -3,6 +3,7 @@ import app from "../config/firebase.config";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
 
@@ -25,8 +26,22 @@ export default function AuthProvider({ children }) {
       throw error;
     }
   };
+  // loginUser
+  const loginUser = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      return userCredential.user;
+    } catch (error) {
+      console.error("Error logging in user:", error);
+      throw error;
+    }
+  };
   return (
-    <AuthContext.Provider value={{ registerUser }}>
+    <AuthContext.Provider value={{ registerUser, loginUser }}>
       {children}
     </AuthContext.Provider>
   );
