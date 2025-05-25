@@ -1,5 +1,5 @@
 import { use, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import validateForm from "../utils/validateForm";
 import AuthContext from "../context/AuthContext";
 import toast from "react-hot-toast";
@@ -18,6 +18,8 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location);
   const handleChange = (e) => {
     setErrors({});
     const { name, value } = e.target;
@@ -50,7 +52,10 @@ export default function Register() {
     }
     if (user) {
       toast.success("User registered successfully!");
-      navigate("/");
+      if (location.state) {
+        return navigate(location.state, { replace: true });
+      }
+      return navigate("/");
     }
     setIsLoading(false);
   };
@@ -65,8 +70,11 @@ export default function Register() {
       return;
     }
     if (user) {
-      toast.success("User signed in successfully!");
-      navigate("/");
+      toast.success("Google signed in successfully!");
+      if (location.state) {
+        return navigate(location.state, { replace: true });
+      }
+      return navigate("/");
     }
     setIsLoading(false);
   };
@@ -81,8 +89,11 @@ export default function Register() {
       return;
     }
     if (user) {
-      toast.success("User signed in successfully!");
-      navigate("/");
+      toast.success("Facebook signed in successfully!");
+      if (location.state) {
+        return navigate(location.state, { replace: true });
+      }
+      return navigate("/");
     }
     setIsLoading(false);
   };
@@ -98,7 +109,10 @@ export default function Register() {
     }
     if (user) {
       toast.success("Github signed in successfully!");
-      navigate("/");
+      if (location.state) {
+        return navigate(location.state, { replace: true });
+      }
+      return navigate("/");
     }
     setIsLoading(false);
   };

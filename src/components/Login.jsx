@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate } from "react-router";
+import { Link, Navigate, useLocation, useNavigate } from "react-router";
 import { use, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import toast from "react-hot-toast";
@@ -15,6 +15,8 @@ export default function Login() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location);
   const handleChange = (e) => {
     setError(null);
     const { name, value } = e.target;
@@ -35,8 +37,11 @@ export default function Login() {
       return;
     }
     if (user) {
-      toast.success("Login successful!");
-      navigate("/");
+      toast.success("Email and Password login successful!");
+      if (location.state) {
+        return navigate(location.state, { replace: true });
+      }
+      return navigate("/");
     }
     setIsLoading(false);
   };
@@ -49,8 +54,11 @@ export default function Login() {
       return;
     }
     if (user) {
-      toast.success("User signed in successfully!");
-      navigate("/");
+      toast.success("Google signed in successfully!");
+      if (location.state) {
+        return navigate(location.state, { replace: true });
+      }
+      return navigate("/");
     }
     setIsLoading(false);
   };
@@ -63,8 +71,11 @@ export default function Login() {
       return;
     }
     if (user) {
-      toast.success("User signed in successfully!");
-      navigate("/");
+      toast.success("Facebook signed in successfully!");
+      if (location.state) {
+        return navigate(location.state, { replace: true });
+      }
+      return navigate("/");
     }
     setIsLoading(false);
   };
@@ -78,7 +89,10 @@ export default function Login() {
     }
     if (user) {
       toast.success("Github signed in successfully!");
-      navigate("/");
+      if (location.state) {
+        return navigate(location.state, { replace: true });
+      }
+      return navigate("/");
     }
     setIsLoading(false);
   };
@@ -178,13 +192,18 @@ export default function Login() {
       </div>
       <p className="text-xs text-center sm:px-6 dark:text-gray-600">
         Don't have an account?
-        <Link
+        <button
+          onClick={() => {
+            navigate("/signup", {
+              state: location.state ? location.state : null,
+            });
+          }}
           rel="noopener noreferrer"
           to="/signup"
           className="underline dark:text-gray-800"
         >
           Sign up
-        </Link>
+        </button>
       </p>
     </div>
   );

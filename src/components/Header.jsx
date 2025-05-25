@@ -53,24 +53,29 @@ export default function Header() {
               About
             </Link>
           </li>
-          <li className="flex">
-            <Link
-              rel="noopener noreferrer"
-              to="User"
-              className="flex items-center px-4 -mb-1 border-b-2 dark:border-"
-            >
-              User
-            </Link>
-          </li>
-          <li className="flex">
-            <Link
-              rel="noopener noreferrer"
-              to="profile"
-              className="flex items-center px-4 -mb-1 border-b-2 dark:border-"
-            >
-              Profile
-            </Link>
-          </li>
+          {observerLoading ||
+            (user && (
+              <>
+                <li className="flex">
+                  <Link
+                    rel="noopener noreferrer"
+                    to="User"
+                    className="flex items-center px-4 -mb-1 border-b-2 dark:border-"
+                  >
+                    User
+                  </Link>
+                </li>
+                <li className="flex">
+                  <Link
+                    rel="noopener noreferrer"
+                    to="profile"
+                    className="flex items-center px-4 -mb-1 border-b-2 dark:border-"
+                  >
+                    Profile
+                  </Link>
+                </li>
+              </>
+            ))}
         </ul>
         <div className="items-center flex-shrink-0 hidden lg:flex">
           {observerLoading || user ? (
