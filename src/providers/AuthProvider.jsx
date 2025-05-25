@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   FacebookAuthProvider,
   getAuth,
+  GithubAuthProvider,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -17,6 +18,7 @@ export default function AuthProvider({ children }) {
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
   const facebookProvider = new FacebookAuthProvider();
+  const githubProvider = new GithubAuthProvider();
   const [user, setUser] = useState(null);
   const [observerLoading, setObserverLoading] = useState(true);
   // authentication state observer
@@ -31,6 +33,15 @@ export default function AuthProvider({ children }) {
   const googleSignIn = async () => {
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
+      return userCredential.user;
+    } catch (error) {
+      return error;
+    }
+  };
+  // Github Sign In
+  const githubSignIn = async () => {
+    try {
+      const userCredential = await signInWithPopup(auth, githubProvider);
       return userCredential.user;
     } catch (error) {
       return error;
@@ -94,6 +105,7 @@ export default function AuthProvider({ children }) {
         logoutUser,
         googleSignIn,
         facebookSignIn,
+        githubSignIn,
       }}
     >
       {children}

@@ -6,7 +6,8 @@ import { FaGithub, FaGoogle } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa6";
 
 export default function Login() {
-  const { loginUser, googleSignIn, facebookSignIn } = use(AuthContext);
+  const { loginUser, googleSignIn, facebookSignIn, githubSignIn } =
+    use(AuthContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -63,6 +64,20 @@ export default function Login() {
     }
     if (user) {
       toast.success("User signed in successfully!");
+      navigate("/");
+    }
+    setIsLoading(false);
+  };
+  const handleGithubSignIn = async () => {
+    setIsLoading(true);
+    const user = await githubSignIn();
+    if (user instanceof Error) {
+      setError(`Github sign-in failed. ${user.message}`);
+      setIsLoading(false);
+      return;
+    }
+    if (user) {
+      toast.success("Github signed in successfully!");
       navigate("/");
     }
     setIsLoading(false);
@@ -147,9 +162,18 @@ export default function Login() {
             </>
           )}
         </button>
-        <button className="bg-gray-800 text-white rounded-md py-2 px-4 flex items-center justify-center gap-[10px] text-[1rem] w-full cursor-pointer mt-2">
-          <FaGithub className="" />
-          Continue with Github
+        <button
+          onClick={handleGithubSignIn}
+          className="bg-gray-800 text-white rounded-md py-2 px-4 flex items-center justify-center gap-[10px] text-[1rem] w-full cursor-pointer mt-2"
+        >
+          {isLoading ? (
+            "Loading..."
+          ) : (
+            <>
+              <FaGithub className="" />
+              Continue with Github
+            </>
+          )}
         </button>
       </div>
       <p className="text-xs text-center sm:px-6 dark:text-gray-600">
