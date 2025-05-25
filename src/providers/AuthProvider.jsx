@@ -5,6 +5,7 @@ import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
   updateProfile,
 } from "firebase/auth";
 import { useEffect, useState } from "react";
@@ -50,9 +51,19 @@ export default function AuthProvider({ children }) {
       return error;
     }
   };
+  // logoutUser
+  const logoutUser = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      return true;
+    } catch (error) {
+      return error;
+    }
+  };
   return (
     <AuthContext.Provider
-      value={{ registerUser, loginUser, user, observerLoading }}
+      value={{ registerUser, loginUser, user, observerLoading, logoutUser }}
     >
       {children}
     </AuthContext.Provider>

@@ -1,10 +1,20 @@
 import { use } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import AuthContext from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function Header() {
-  const { user, observerLoading } = use(AuthContext);
-
+  const { user, observerLoading, logoutUser } = use(AuthContext);
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    const result = await logoutUser();
+    if (result instanceof Error) {
+      console.error("Logout failed:", result.message);
+    } else {
+      toast.success("Logged out successfully");
+      navigate("/signin");
+    }
+  };
   return (
     <header className="p-4 dark:bg-gray-100 dark:text-gray-800 shadow">
       <div className="container flex justify-between h-16 mx-auto">
@@ -64,7 +74,10 @@ export default function Header() {
         </ul>
         <div className="items-center flex-shrink-0 hidden lg:flex">
           {observerLoading || user ? (
-            <button className="self-center px-8 py-3 font-semibold rounded dark:bg-red-600 dark:text-gray-50 cursor-pointer">
+            <button
+              onClick={handleLogout}
+              className="self-center px-8 py-3 font-semibold rounded dark:bg-red-600 dark:text-gray-50 cursor-pointer"
+            >
               Log Out
             </button>
           ) : (
