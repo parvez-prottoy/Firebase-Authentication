@@ -3,8 +3,10 @@ import app from "../config/firebase.config";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
 } from "firebase/auth";
@@ -12,6 +14,7 @@ import { useEffect, useState } from "react";
 
 export default function AuthProvider({ children }) {
   const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
   const [user, setUser] = useState(null);
   const [observerLoading, setObserverLoading] = useState(true);
   // authentication state observer
@@ -22,6 +25,15 @@ export default function AuthProvider({ children }) {
     });
     return () => unsubscribe();
   }, [auth]);
+  // Google Sign In
+  const googleSignIn = async () => {
+    try {
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      return userCredential.user;
+    } catch (error) {
+      return error;
+    }
+  };
   //   registerUser
   const registerUser = async (username, email, password) => {
     try {
@@ -63,7 +75,14 @@ export default function AuthProvider({ children }) {
   };
   return (
     <AuthContext.Provider
-      value={{ registerUser, loginUser, user, observerLoading, logoutUser }}
+      value={{
+        registerUser,
+        loginUser,
+        user,
+        observerLoading,
+        logoutUser,
+        googleSignIn,
+      }}
     >
       {children}
     </AuthContext.Provider>
