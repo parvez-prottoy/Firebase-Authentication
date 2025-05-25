@@ -7,7 +7,7 @@ import { FaGithub, FaGoogle } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa6";
 
 export default function Register() {
-  const { registerUser, googleSignIn } = use(AuthContext);
+  const { registerUser, googleSignIn, facebookSignIn } = use(AuthContext);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -59,6 +59,22 @@ export default function Register() {
     if (user instanceof Error) {
       setErrors({
         general: `Google Sign In failed. ${user.message}`,
+      });
+      setIsLoading(false);
+      return;
+    }
+    if (user) {
+      toast.success("User signed in successfully!");
+      navigate("/");
+    }
+    setIsLoading(false);
+  };
+  const handleFacebookSignIn = async () => {
+    setIsLoading(true);
+    const user = await facebookSignIn();
+    if (user instanceof Error) {
+      setErrors({
+        general: `Facebook Sign In failed. ${user.message}`,
       });
       setIsLoading(false);
       return;
@@ -186,9 +202,18 @@ export default function Register() {
             </>
           )}
         </button>
-        <button className="bg-blue-600 text-white rounded-md py-2 px-4 flex items-center justify-center gap-[10px] text-[1rem] w-full cursor-pointer mt-2">
-          <FaFacebook className="" />
-          Continue with Facebook
+        <button
+          onClick={handleFacebookSignIn}
+          className="bg-blue-600 text-white rounded-md py-2 px-4 flex items-center justify-center gap-[10px] text-[1rem] w-full cursor-pointer mt-2"
+        >
+          {isLoading ? (
+            "Loading..."
+          ) : (
+            <>
+              <FaFacebook className="" />
+              Continue with Facebook
+            </>
+          )}
         </button>
         <button className="bg-gray-800 text-white rounded-md py-2 px-4 flex items-center justify-center gap-[10px] text-[1rem] w-full cursor-pointer mt-2">
           <FaGithub className="" />

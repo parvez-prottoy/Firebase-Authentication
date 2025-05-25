@@ -2,6 +2,7 @@ import AuthContext from "../context/AuthContext";
 import app from "../config/firebase.config";
 import {
   createUserWithEmailAndPassword,
+  FacebookAuthProvider,
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -15,6 +16,7 @@ import { useEffect, useState } from "react";
 export default function AuthProvider({ children }) {
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
+  const facebookProvider = new FacebookAuthProvider();
   const [user, setUser] = useState(null);
   const [observerLoading, setObserverLoading] = useState(true);
   // authentication state observer
@@ -29,6 +31,15 @@ export default function AuthProvider({ children }) {
   const googleSignIn = async () => {
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
+      return userCredential.user;
+    } catch (error) {
+      return error;
+    }
+  };
+  // Facebook Sign In
+  const facebookSignIn = async () => {
+    try {
+      const userCredential = await signInWithPopup(auth, facebookProvider);
       return userCredential.user;
     } catch (error) {
       return error;
@@ -82,6 +93,7 @@ export default function AuthProvider({ children }) {
         observerLoading,
         logoutUser,
         googleSignIn,
+        facebookSignIn,
       }}
     >
       {children}
