@@ -1,6 +1,10 @@
+import { use } from "react";
 import { Link } from "react-router";
+import AuthContext from "../context/AuthContext";
 
 export default function Header() {
+  const { user, observerLoading } = use(AuthContext);
+
   return (
     <header className="p-4 dark:bg-gray-100 dark:text-gray-800 shadow">
       <div className="container flex justify-between h-16 mx-auto">
@@ -59,12 +63,18 @@ export default function Header() {
           </li>
         </ul>
         <div className="items-center flex-shrink-0 hidden lg:flex">
-          <Link
-            to="/signin"
-            className="self-center px-8 py-3 font-semibold rounded dark:bg-violet-600 dark:text-gray-50"
-          >
-            Sign In
-          </Link>
+          {observerLoading || user ? (
+            <button className="self-center px-8 py-3 font-semibold rounded dark:bg-red-600 dark:text-gray-50 cursor-pointer">
+              Log Out
+            </button>
+          ) : (
+            <Link
+              to="/signin"
+              className="self-center px-8 py-3 font-semibold rounded dark:bg-violet-600 dark:text-gray-50 cursor-pointer"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
         <button className="p-4 lg:hidden">
           <svg

@@ -1,6 +1,7 @@
-import { Link } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 import { use, useState } from "react";
 import AuthContext from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const { loginUser } = use(AuthContext);
@@ -10,7 +11,9 @@ export default function Login() {
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const handleChange = (e) => {
+    setError(null);
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -21,21 +24,18 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    try {
-      // Simulate login process
-      const user = await loginUser(formData.email, formData.password);
-      console.log("User logged in successfully:", user);
-    } catch (err) {
-      setError(`Login failed. Please try again. ${err.message}`);
-      console.error("Login error:", err);
-    } finally {
+    // Simulate login process
+    const user = await loginUser(formData.email, formData.password);
+    if (user instanceof Error) {
+      setError(`Login failed. ${user.message}`);
       setIsLoading(false);
+      return;
     }
-    setFormData({
-      email: "",
-      password: "",
-    });
-    setError(null);
+    if (user) {
+      toast.success("Login successful!");
+      navigate("/");
+    }
+    setIsLoading(false);
   };
   return (
     <div className="w-full max-w-md p-8 space-y-3 rounded-xl dark:bg-gray-50 dark:text-gray-800 mx-auto">

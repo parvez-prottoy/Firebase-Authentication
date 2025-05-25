@@ -3,12 +3,24 @@ import app from "../config/firebase.config";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import { useEffect, useState } from "react";
 
 export default function AuthProvider({ children }) {
   const auth = getAuth(app);
+  const [user, setUser] = useState(null);
+  const [observerLoading, setObserverLoading] = useState(true);
+  // authentication state observer
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setObserverLoading(false);
+    });
+    return () => unsubscribe();
+  }, [auth]);
   //   registerUser
   const registerUser = async (username, email, password) => {
     try {
@@ -22,8 +34,7 @@ export default function AuthProvider({ children }) {
       await updateProfile(user, { displayName: username });
       return user;
     } catch (error) {
-      console.error("Error registering user:", error);
-      throw error;
+      return error;
     }
   };
   // loginUser
@@ -36,12 +47,13 @@ export default function AuthProvider({ children }) {
       );
       return userCredential.user;
     } catch (error) {
-      console.error("Error logging in user:", error);
-      throw error;
+      return error;
     }
   };
   return (
-    <AuthContext.Provider value={{ registerUser, loginUser }}>
+    <AuthContext.Provider
+      value={{ registerUser, loginUser, user, observerLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

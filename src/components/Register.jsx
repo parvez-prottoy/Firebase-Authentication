@@ -1,7 +1,8 @@
 import { use, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import validateForm from "../utils/validateForm";
 import AuthContext from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const { registerUser } = use(AuthContext);
@@ -13,8 +14,9 @@ export default function Register() {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
+    setErrors({});
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -29,27 +31,25 @@ export default function Register() {
       return;
     }
     setIsLoading(true);
-    try {
-      const user = await registerUser(
-        formData.username,
-        formData.email,
-        formData.password
-      );
-      console.log("User registered successfully:", user);
-    } catch (error) {
-      setErrors({
-        general: `Registration failed. ${error.message}`,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-    setFormData({
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
     setErrors({});
+    // Simulate registration process
+    const user = await registerUser(
+      formData.username,
+      formData.email,
+      formData.password
+    );
+    if (user instanceof Error) {
+      setErrors({
+        general: `Registration failed. ${user.message}`,
+      });
+      setIsLoading(false);
+      return;
+    }
+    if (user) {
+      toast.success("User registered successfully!");
+      navigate("/");
+    }
+    setIsLoading(false);
   };
   return (
     <div className="w-full max-w-md p-8 space-y-3 rounded-xl dark:bg-gray-50 dark:text-gray-800 mx-auto">
